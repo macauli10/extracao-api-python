@@ -1,6 +1,6 @@
 # 🪙 ETL de Preço do Bitcoin com Airflow e Docker
 
-Este projeto realiza a coleta periódica do preço do Bitcoin usando a API pública da Coinbase e armazena os dados em um arquivo CSV. A orquestração é feita com Apache Airflow, utilizando Docker Compose para garantir um ambiente reproduzível.
+Este projeto realiza a coleta periódica do preço do Bitcoin usando a API pública da Coinbase e armazena os dados em um arquivo CSV e em um banco de dados SQLite local. A orquestração é feita com Apache Airflow, utilizando Docker Compose para garantir um ambiente reproduzível.
 
 ---
 
@@ -10,6 +10,7 @@ Este projeto realiza a coleta periódica do preço do Bitcoin usando a API públ
 - Apache Airflow 2.8.1
 - Docker e Docker Compose
 - API pública da [Coinbase](https://api.coinbase.com)
+- SQLite (armazenamento local dos dados)
 - PostgreSQL (banco do Airflow)
 
 ---
@@ -20,13 +21,17 @@ ETLPython/
 ├── dags/
 │ └── etl_bitcoin_dag.py # DAG do Airflow que executa a coleta
 ├── scripts/
-│ └── main.py # Script Python que coleta o preço e salva no CSV
+│ └── main.py # Script Python que coleta o preço e salva no CSV e no SQLite
 ├── data/
 │ └── bitcoin_prices.csv # Arquivo CSV onde os dados são armazenados
+├── bitcoin_prices.db # Banco de dados SQLite com os preços do Bitcoin
 ├── docker-compose.yml # Orquestração dos containers com Airflow e PostgreSQL
 ├── requirements.txt # Bibliotecas necessárias (opcional)
 └── README.md
 
+yaml
+Copy
+Edit
 
 ---
 
@@ -45,7 +50,6 @@ ETLPython/
 ```bash
 git clone https://github.com/seu-usuario/ETLPython.git
 cd ETLPython
-
 2. Suba os containers com Docker Compose
 bash
 Copy
@@ -61,7 +65,7 @@ docker-compose run airflow-webserver airflow db init
 4. Acesse o Airflow
 Abra o navegador:
 
-arduino
+url
 Copy
 Edit
 http://localhost:8080
@@ -71,9 +75,14 @@ Senha padrão: airflow
 ⚠️ Você pode criar um usuário com docker exec caso queira personalizar.
 
 📅 Sobre a DAG
-O agendamento está configurado para executar a cada 30 segundos, coletando o preço do Bitcoin e salvando no CSV (/opt/airflow/data/bitcoin_prices.csv).
+O agendamento está configurado para executar a cada um minuto, coletando o preço do Bitcoin e salvando:
+
+no CSV: /opt/airflow/data/bitcoin_prices.csv
+
+no SQLite: /opt/airflow/bitcoin_prices.db
 
 Exemplo de dado salvo:
+
 csv
 Copy
 Edit
@@ -95,5 +104,4 @@ Montagens de volumes para dags, scripts, e data
 
 ✍️ Autor
 Macauli 👨‍💻
-Projeto pessoal para aprender orquestração de ETLs com Airflow e Docker.
-
+Projeto pessoal para aprender orquestração de ETLs com Airflow, Docker e persistência de dados com SQLite.
